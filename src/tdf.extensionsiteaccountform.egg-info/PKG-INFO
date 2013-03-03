@@ -1,0 +1,36 @@
+Metadata-Version: 1.1
+Name: tdf.extensionsiteaccountform
+Version: 1.0
+Summary: A Plone add-on that contains  a form to ask for an account on the LibreOffice extensions site.
+Home-page: http://extensions.libreoffice.org
+Author: Andreas Mantke
+Author-email: maand@gmx.de
+License: gpl
+Description: .. contents::
+        
+        Introduction
+        ============
+        
+        A Plone add-on that contains a email form that a user of the LibreOffice extensions site could use to ask for an account on the site.
+        Contributors
+        ============
+        
+        Andreas Mantke, Author
+        
+        Changelog
+        =========
+        
+        1.0-dev (unreleased)
+        --------------------
+        
+        - Package created using templer
+          [Andreas Mantke]
+        
+Keywords: Plone Add-On Form LibreOffice Extension Site
+Platform: UNKNOWN
+Classifier: Environment :: Web Environment
+Classifier: Framework :: Plone
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 2.6
+Classifier: Topic :: Software Development :: Libraries :: Python Modules

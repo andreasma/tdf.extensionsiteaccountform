@@ -1,0 +1,5 @@
+setuptools
+plone.formwidget.recaptcha
+
+[test]
+plone.app.testing

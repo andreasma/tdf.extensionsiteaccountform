@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<object name="portal_actions"
+        xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+
+    <object name="site_actions">
+
+<object name="accountrequest" meta_type="CMF Action" i18n:domain="tdf.extensionsiteaccountform">
+    <property name="title" i18n:translate="">Ask for an Account</property>
+    <property name="description" i18n:translate=""></property>
+    <property name="url_expr">string:$portal_url/@@ask-for-an-account</property>
+    <property name="icon_expr"></property>
+    <property name="available_expr"></property>
+    <property name="permissions">
+        <element value="View"/>
+    </property>
+    <property name="visible">True</property>
+
+</object>
+</object>
+</object>
