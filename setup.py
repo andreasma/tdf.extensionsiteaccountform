@@ -41,7 +41,7 @@ setup(name='tdf.extensionsiteaccountform',
       install_requires=[
           'setuptools',
           # -*- Extra requirements: -*-
-          'plone.formwidget.recaptcha'
+          'plone.formwidget.recaptcha',
           'plone.app.dexterity [grok]'
       ],
       extras_require={'test': ['plone.app.testing']},
