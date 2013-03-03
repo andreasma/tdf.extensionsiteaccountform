@@ -158,7 +158,7 @@ class ExtensionsiteaccountForm(form.Form):
         mailhost.send(message, mto=toAddress, mfrom=str(source), subject=subject, charset='utf8')
 
         # Issue a status message
-        confirm = _(u"Thank you! Your registration has been received and we will send you a confirmation mail as soon as posible.")
+        confirm = _(u"Thank you! Your request for an account has been received and we will create an account. You will get an email with a link to activate your account and reset the password.")
         IStatusMessage(self.request).add(confirm, type='info')
 
         # Redirect to the portal front page. Return an empty string as the
