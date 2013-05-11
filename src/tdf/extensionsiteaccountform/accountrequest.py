@@ -60,12 +60,27 @@ class IExtensionsiteaccountForm(Interface):
 
 
 
-    requestofaccount= schema.Text(
-        title =_(u"Request for an account on the LibreOffice Extensions Site: http://extensions.libreoffice.org"),
-        description=_(u"(If you created an extension for LibreOffice and want to publish it on the LibreOffice Extensions Site you could ask for an account on the site. Please tell us in the field below a bit about your extension project.)"),
+    explanation=schema.Text(
+        title=_(u"Important Information:"),
+        description=_(u"You do not need an account to download extensions from http://extensions.libreoffice.org!"),
         readonly=True,
         required=False,
         )
+
+
+    requestofaccount= schema.Text(
+        title =_(u"Hosting your Extension on the LibreOffice Extensions Site: http://extensions.libreoffice.org"),
+        description=_(u"Submit the form below in case you created a LibreOffice extension and want to publish it at the LibreOffice Extensions Site."),
+        readonly=True,
+        required=False,
+        )
+
+    infofirstextensionuploadtiming = schema.Text(
+        title =_(u"Please upload your extension after you have received the credentials. Projects without files will be deleted after two weeks without further notice!"),
+        readonly=True,
+        required=False,
+    )
+
 
     name = schema.TextLine(
         title=_(u"Lastname"),
@@ -78,7 +93,7 @@ class IExtensionsiteaccountForm(Interface):
 
     preferedusername = schema.ASCIILine(
         title=_(u"User Name (5 - 15 ASCII characters)"),
-        description=_(u"If we should create a special user name please write it down. In case your preferred username is already taken we will add numbers to your suggestion. "),
+        description=_(u"Please suggest your desired username. In case your preferred username is already taken we will add numbers to your suggestion."),
         min_length=5,
         max_length=15,
         required=False,
@@ -96,7 +111,8 @@ class IExtensionsiteaccountForm(Interface):
 
     message = schema.Text(
         title=_(u"Short Description of Your Extension Project"),
-        description=_(u"Please keep to 1,000 characters"),
+        description=_(u"Please keep from 50 to 1,000 characters"),
+        min_length=50,
         max_length=1000,
         required=False,
         )
@@ -111,14 +127,14 @@ class ExtensionsiteaccountForm(form.Form):
 
 
     grok.context(ISiteRoot)
-    grok.name('ask-for-an-account')
+    grok.name('hosting-your-extension')
     grok.require('zope2.View')
 
     fields = field.Fields(IExtensionsiteaccountForm)
     fields['captcha'].widgetFactory = ReCaptchaFieldWidget
 
-    label = _(u"Ask for an Account")
-    description = _(u"Please give us a short description of your extension project.")
+    label = _(u"Hosting your Extension(s)")
+    description = _(u"Please leave a short description of your template project below.")
 
     ignoreContext = True
 
