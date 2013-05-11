@@ -5,9 +5,9 @@
     <object name="site_actions">
 
 <object name="accountrequest" meta_type="CMF Action" i18n:domain="tdf.extensionsiteaccountform">
-    <property name="title" i18n:translate="">Ask for an Account</property>
+    <property name="title" i18n:translate="">Hostin your Extension(s)</property>
     <property name="description" i18n:translate=""></property>
-    <property name="url_expr">string:$portal_url/@@ask-for-an-account</property>
+    <property name="url_expr">string:$portal_url/@@hosting-your-extension</property>
     <property name="icon_expr"></property>
     <property name="available_expr"></property>
     <property name="permissions">
