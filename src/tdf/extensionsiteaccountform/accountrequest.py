@@ -93,7 +93,7 @@ class IExtensionsiteaccountForm(Interface):
 
     preferedusername = schema.ASCIILine(
         title=_(u"User Name (5 - 15 ASCII characters)"),
-        description=_(u"Please suggest your desired username. In case your preferred username is already taken we will add numbers to your suggestion."),
+        description=_(u"Please suggest your desired username. In case your preferred username is already taken, we will add numbers to your suggestion."),
         min_length=5,
         max_length=15,
         required=False,
@@ -102,7 +102,7 @@ class IExtensionsiteaccountForm(Interface):
 
 
     emailAddress = schema.ASCIILine(
-        title=_(u"Your email address (tied to your account)"),
+        title=_(u"Your Email Address (required)"),
         constraint=validateEmail
     )
 
