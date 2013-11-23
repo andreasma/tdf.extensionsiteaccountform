@@ -4,7 +4,7 @@
 
     <object name="site_actions">
 
-<object name="accountrequest" meta_type="CMF Action" i18n:domain="tdf.extensionsiteaccountform">
+<object name="accountrequestnew" meta_type="CMF Action" i18n:domain="tdf.extensionsiteaccountform">
     <property name="title" i18n:translate="">Hosting your Extension(s)</property>
     <property name="description" i18n:translate=""></property>
     <property name="url_expr">string:$portal_url/@@hosting-your-extension</property>

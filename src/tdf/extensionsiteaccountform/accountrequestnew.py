@@ -18,14 +18,9 @@ from z3c.form.browser.radio import RadioFieldWidget
 
 from zope.component import getMultiAdapter
 from Acquisition import aq_inner
-from plone.formwidget.recaptcha.widget import ReCaptchaFieldWidget
 
-
-class ReCaptcha(object):
-    subject = u""
-    captcha = u""
-    def __init__(self, context):
-        self.context = context
+from collective.z3cform.norobots.widget import NorobotsFieldWidget
+from collective.z3cform.norobots.validator import NorobotsValidator
 
 
 checkEmail = re.compile(
@@ -54,7 +49,7 @@ Prefered Username: %(preferedusername)s
 
 
 
-class IExtensionsiteaccountForm(Interface):
+class IExtensionsiteaccountForm2(Interface):
     """Define the fields of our form
     """
 
@@ -117,21 +112,21 @@ class IExtensionsiteaccountForm(Interface):
         required=False,
         )
 
-    captcha = schema.TextLine(
-        title=_(u"ReCaptcha"),
-        description=_(u""),
-        required=False
-    )
+    norobots = schema.TextLine(title=_(u'Are you a human ?'),
+                               description=_(u'In order to avoid spam, please answer the question below.'),
+                               required=True)
 
-class ExtensionsiteaccountForm(form.Form):
+
+
+class ExtensionsiteaccountForm2(form.Form):
 
 
     grok.context(ISiteRoot)
-    grok.name('hosting-your-extension2')
+    grok.name('hosting-your-extension')
     grok.require('zope2.View')
 
-    fields = field.Fields(IExtensionsiteaccountForm)
-    fields['captcha'].widgetFactory = ReCaptchaFieldWidget
+    fields = field.Fields(IExtensionsiteaccountForm2)
+    fields['norobots'].widgetFactory = NorobotsFieldWidget
 
     label = _(u"Hosting your Extension(s)")
     description = _(u"Please leave a short description of your template project below.")
@@ -142,7 +137,7 @@ class ExtensionsiteaccountForm(form.Form):
     # Hide the editable border and tabs
     def update(self):
         self.request.set('disable_border', True)
-        return super(ExtensionsiteaccountForm, self).update()
+        return super(ExtensionsiteaccountForm2, self).update()
 
     @button.buttonAndHandler(_(u"Send"))
     def sendMail(self, action):
@@ -153,12 +148,6 @@ class ExtensionsiteaccountForm(form.Form):
         data, errors = self.extractData()
         if errors:
             self.status = self.formErrorsMessage
-            captcha = getMultiAdapter((aq_inner(self.context), self.request), name='recaptcha')
-            if captcha.verify():
-                print 'ReCaptcha validation passed.'
-            else:
-                print 'The code you entered was wrong, please enter the new one.'
-            return
 
         mailhost = getToolByName(self.context, 'MailHost')
         urltool = getToolByName(self.context, 'portal_url')
@@ -177,8 +166,8 @@ class ExtensionsiteaccountForm(form.Form):
         confirm = _(u"Thank you! Your request for an account has been received and we will create an account. You will get an email with a link to activate your account and reset the password.")
         IStatusMessage(self.request).add(confirm, type='info')
 
-        # Redirect to the portal front page. Return an empty string as the
-        # page body - we are redirecting anyway!
+            # Redirect to the portal front page. Return an empty string as the
+            # page body - we are redirecting anyway!
         self.request.response.redirect(portal.absolute_url())
         return ''
 

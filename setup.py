@@ -42,7 +42,8 @@ setup(name='tdf.extensionsiteaccountform',
           'setuptools',
           # -*- Extra requirements: -*-
           'plone.formwidget.recaptcha',
-          'plone.app.dexterity [grok]'
+          'plone.app.dexterity [grok]',
+          'collective.z3cform.norobots',
       ],
       extras_require={'test': ['plone.app.testing']},
       entry_points="""
