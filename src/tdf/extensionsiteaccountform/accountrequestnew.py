@@ -5,7 +5,7 @@ from plone.directives import form
 from zope.interface import Interface
 from zope.interface import Invalid
 from zope import schema
-from z3c.form import field, button
+from z3c.form import field, button, validator
 from Products.statusmessages.interfaces import IStatusMessage
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.utils import getToolByName
@@ -109,7 +109,8 @@ class IExtensionsiteaccountForm2(Interface):
         description=_(u"Please keep between 50 to 1,000 characters"),
         min_length=50,
         max_length=1000,
-        required=False,
+        required=True,
+
         )
 
     norobots = schema.TextLine(title=_(u'Are you a human ?'),
@@ -132,6 +133,8 @@ class ExtensionsiteaccountForm2(form.Form):
     description = _(u"Please leave a short description of your template project below.")
 
     ignoreContext = True
+
+    validator.WidgetValidatorDiscriminators(NorobotsValidator, field=IExtensionsiteaccountForm2['norobots'])
 
 
     # Hide the editable border and tabs
