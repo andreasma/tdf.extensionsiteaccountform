@@ -35,7 +35,7 @@ def validateEmail(value):
 
 MESSAGE_TEMPLATE = """\
 
-Account Request from %(firstname)s %(name)s <%(emailAddress)s>
+Account Request from %(firstname)s %(name)s <%(emailAddress)s> for LibreOffice Extensions site
 
 Firstname: %(firstname)s
 Name: %(name)s
@@ -120,7 +120,7 @@ class IExtensionsiteaccountForm2(Interface):
     form.widget(norobots=NorobotsFieldWidget)
     norobots = schema.TextLine(title=_(u'Are you a human ?'),
                                description=_(u'In order to avoid spam, please answer the question below.'),
-                               required=True)
+                               required=True,)
 
 validator.WidgetValidatorDiscriminators(NorobotsValidator, field=IExtensionsiteaccountForm2['norobots'])
 grok.global_adapter(NorobotsValidator)
@@ -131,6 +131,8 @@ class ExtensionsiteaccountForm2(form.SchemaForm):
     grok.context(ISiteRoot)
     grok.name('hosting-your-extension')
     grok.require('zope2.View')
+
+    enableCSRFProtection = True
 
     schema = IExtensionsiteaccountForm2
 
@@ -154,6 +156,7 @@ class ExtensionsiteaccountForm2(form.SchemaForm):
         data, errors = self.extractData()
         if errors:
             self.status = self.formErrorsMessage
+            return
 
 
         elif 'leaveblank' in data and data['leaveblank']:
@@ -165,27 +168,29 @@ class ExtensionsiteaccountForm2(form.SchemaForm):
             self.request.response.redirect(portal.absolute_url())
             return
 
-        mailhost = getToolByName(self.context, 'MailHost')
-        urltool = getToolByName(self.context, 'portal_url')
+        else:
 
-        portal = urltool.getPortalObject()
+            mailhost = getToolByName(self.context, 'MailHost')
+            urltool = getToolByName(self.context, 'portal_url')
 
-        # Construct and send a message
-        toAddress = portal.getProperty('email_from_address')
-        source = "%s <%s>" % ('Asking for an Account on the extensions site', 'extensions@otrs.documentfoundation.org')
-        subject = "%s %s" % (data['firstname'], data['name'])
-        message = MESSAGE_TEMPLATE % data
+            portal = urltool.getPortalObject()
 
-        mailhost.send(message, mto=toAddress, mfrom=str(source), subject=subject, charset='utf8')
+            # Construct and send a message
+            toAddress = portal.getProperty('email_from_address')
+            source = "%s <%s>" % ('Asking for an Account on the extensions site', 'extensions@otrs.documentfoundation.org')
+            subject = "%s %s" % (data['firstname'], data['name'])
+            message = MESSAGE_TEMPLATE % data
 
-        # Issue a status message
-        confirm = _(u"Thank you! Your request for an account has been received and we will create an account. You will get an email with a link to activate your account and reset the password.")
-        IStatusMessage(self.request).add(confirm, type='info')
+            mailhost.send(message, mto=toAddress, mfrom=str(source), subject=subject, charset='utf8')
+
+            # Issue a status message
+            confirm = _(u"Thank you! Your request for an account has been received and we will create an account. You will get an email with a link to activate your account and reset the password.")
+            IStatusMessage(self.request).add(confirm, type='info')
 
             # Redirect to the portal front page. Return an empty string as the
             # page body - we are redirecting anyway!
-        self.request.response.redirect(portal.absolute_url())
-        return ''
+            self.request.response.redirect(portal.absolute_url())
+            return ''
 
     @button.buttonAndHandler(_(u"Cancel"))
     def cancelForm(self, action):
