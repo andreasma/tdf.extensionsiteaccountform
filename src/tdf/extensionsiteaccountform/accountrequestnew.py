@@ -100,6 +100,7 @@ class IExtensionsiteaccountForm2(Interface):
         title=_(u"Your Email Address (required)"),
         constraint=validateEmail
     )
+
     form.mode(leaveblank='hidden')
     leaveblank = schema.ASCIILine(
         title=_(u'Please leave empty'),
