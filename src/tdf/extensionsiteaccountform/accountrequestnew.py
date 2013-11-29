@@ -40,7 +40,7 @@ Account Request from %(firstname)s %(name)s <%(emailAddress)s>
 Firstname: %(firstname)s
 Name: %(name)s
 Email: %(emailAddress)s
-Prefered Username: %(preferedusername)s
+Preferred Username: %(preferredusername)s
 
 
 
@@ -86,7 +86,7 @@ class IExtensionsiteaccountForm2(Interface):
         title=_(u"Firstname"),
         )
 
-    preferedusername = schema.ASCIILine(
+    preferredusername = schema.ASCIILine(
         title=_(u"User Name (5 - 15 ASCII characters)"),
         description=_(u"Please suggest your desired username. In case your preferred username is already taken, we will add numbers to your suggestion."),
         min_length=5,
@@ -100,8 +100,11 @@ class IExtensionsiteaccountForm2(Interface):
         title=_(u"Your Email Address (required)"),
         constraint=validateEmail
     )
-
-
+    form.mode(leaveblank='hidden')
+    leaveblank = schema.ASCIILine(
+        title=_(u'Please leave empty'),
+        required=False,
+    )
 
 
     message = schema.Text(
@@ -113,28 +116,27 @@ class IExtensionsiteaccountForm2(Interface):
 
         )
 
+    form.widget(norobots=NorobotsFieldWidget)
     norobots = schema.TextLine(title=_(u'Are you a human ?'),
                                description=_(u'In order to avoid spam, please answer the question below.'),
                                required=True)
 
+validator.WidgetValidatorDiscriminators(NorobotsValidator, field=IExtensionsiteaccountForm2['norobots'])
+grok.global_adapter(NorobotsValidator)
 
-
-class ExtensionsiteaccountForm2(form.Form):
+class ExtensionsiteaccountForm2(form.SchemaForm):
 
 
     grok.context(ISiteRoot)
     grok.name('hosting-your-extension')
     grok.require('zope2.View')
 
-    fields = field.Fields(IExtensionsiteaccountForm2)
-    fields['norobots'].widgetFactory = NorobotsFieldWidget
+    schema = IExtensionsiteaccountForm2
 
     label = _(u"Hosting your Extension(s)")
     description = _(u"Please leave a short description of your template project below.")
 
     ignoreContext = True
-
-    validator.WidgetValidatorDiscriminators(NorobotsValidator, field=IExtensionsiteaccountForm2['norobots'])
 
 
     # Hide the editable border and tabs
@@ -151,6 +153,16 @@ class ExtensionsiteaccountForm2(form.Form):
         data, errors = self.extractData()
         if errors:
             self.status = self.formErrorsMessage
+
+
+        elif 'leaveblank' in data and data['leaveblank']:
+
+            urltool = getToolByName(self.context, 'portal_url')
+
+            portal = urltool.getPortalObject()
+
+            self.request.response.redirect(portal.absolute_url())
+            return
 
         mailhost = getToolByName(self.context, 'MailHost')
         urltool = getToolByName(self.context, 'portal_url')
