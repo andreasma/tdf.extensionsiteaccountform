@@ -13,6 +13,7 @@ src/tdf.extensionsiteaccountform.egg-info/requires.txt
 src/tdf.extensionsiteaccountform.egg-info/top_level.txt
 src/tdf/extensionsiteaccountform/__init__.py
 src/tdf/extensionsiteaccountform/accountrequest.py
+src/tdf/extensionsiteaccountform/accountrequestnew.py
 src/tdf/extensionsiteaccountform/testing.py
 src/tdf/extensionsiteaccountform/tests/__init__.py
 src/tdf/extensionsiteaccountform/tests/test_example.py

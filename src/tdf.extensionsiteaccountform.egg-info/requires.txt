@@ -1,6 +1,7 @@
 setuptools
 plone.formwidget.recaptcha
 plone.app.dexterity [grok]
+collective.z3cform.norobots
 
 [test]
 plone.app.testing
