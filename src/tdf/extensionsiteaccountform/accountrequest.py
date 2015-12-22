@@ -131,7 +131,7 @@ class ExtensionsiteaccountForm(form.Form):
     fields = field.Fields(IExtensionsiteaccountForm)
     fields['captcha'].widgetFactory = ReCaptchaFieldWidget
 
-    label = _(u"Hosting your Extension(s)")
+    label = _(u"Hosting your Extension(s) (Registration)")
     description = _(u"Please leave a short description of your template project below.")
 
     ignoreContext = True
