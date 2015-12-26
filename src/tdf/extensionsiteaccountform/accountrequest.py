@@ -54,25 +54,23 @@ class IExtensionsiteaccountForm(Interface):
     """
 
 
-
+    form.mode(explanation='display')
     explanation=schema.Text(
         title=_(u"Important Information:"),
         description=_(u"You do not need an account to download extensions from http://extensions.libreoffice.org!"),
-        readonly=True,
         required=False,
         )
 
-
+    form.mode(requestofaccount='display')
     requestofaccount= schema.Text(
         title =_(u"Hosting your Extension on the LibreOffice Extensions Site: http://extensions.libreoffice.org"),
         description=_(u"Submit the form below in case you created a LibreOffice extension and want to publish it at the LibreOffice Extensions Site."),
-        readonly=True,
         required=False,
         )
 
+    form.mode(infofirstextensionuploadtiming='display')
     infofirstextensionuploadtiming = schema.Text(
         title =_(u"Please upload your extension after you have received the credentials. Projects without files will be deleted after two weeks without further notice!"),
-        readonly=True,
         required=False,
     )
 
