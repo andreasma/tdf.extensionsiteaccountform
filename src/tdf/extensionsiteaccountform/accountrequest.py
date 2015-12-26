@@ -5,7 +5,7 @@ from plone.directives import form
 from zope.interface import Interface
 from zope.interface import Invalid
 from zope import schema
-from z3c.form import field, button
+from z3c.form import field, button, validator
 from Products.statusmessages.interfaces import IStatusMessage
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.utils import getToolByName
@@ -18,14 +18,9 @@ from z3c.form.browser.radio import RadioFieldWidget
 
 from zope.component import getMultiAdapter
 from Acquisition import aq_inner
-from plone.formwidget.recaptcha.widget import ReCaptchaFieldWidget
 
-
-class ReCaptcha(object):
-    subject = u""
-    captcha = u""
-    def __init__(self, context):
-        self.context = context
+from collective.z3cform.norobots.widget import NorobotsFieldWidget
+from collective.z3cform.norobots.validator import NorobotsValidator
 
 
 checkEmail = re.compile(
@@ -40,12 +35,12 @@ def validateEmail(value):
 
 MESSAGE_TEMPLATE = """\
 
-Account Request from %(firstname)s %(name)s <%(emailAddress)s>
+Account Request from %(firstname)s %(name)s <%(emailAddress)s> for LibreOffice Extensions site
 
 Firstname: %(firstname)s
 Name: %(name)s
 Email: %(emailAddress)s
-Prefered Username: %(preferedusername)s
+Preferred Username: %(preferredusername)s
 
 
 
@@ -91,7 +86,7 @@ class IExtensionsiteaccountForm(Interface):
         title=_(u"Firstname"),
         )
 
-    preferedusername = schema.ASCIILine(
+    preferredusername = schema.ASCIILine(
         title=_(u"User Name (5 - 15 ASCII characters)"),
         description=_(u"Please suggest your desired username. In case your preferred username is already taken, we will add numbers to your suggestion."),
         min_length=5,
@@ -106,7 +101,11 @@ class IExtensionsiteaccountForm(Interface):
         constraint=validateEmail
     )
 
-
+    form.mode(leaveblank='hidden')
+    leaveblank = schema.ASCIILine(
+        title=_(u'Please leave empty'),
+        required=False,
+    )
 
 
     message = schema.Text(
@@ -114,26 +113,30 @@ class IExtensionsiteaccountForm(Interface):
         description=_(u"Please keep between 50 to 1,000 characters"),
         min_length=50,
         max_length=1000,
-        required=False,
+        required=True,
+
         )
 
-    captcha = schema.TextLine(
-        title=_(u"ReCaptcha"),
-        description=_(u""),
-        required=False
-    )
+    form.widget(norobots=NorobotsFieldWidget)
+    norobots = schema.TextLine(title=_(u'Are you a human ?'),
+                               description=_(u'In order to avoid spam, please answer the question below.'),
+                               required=True,)
 
-class ExtensionsiteaccountForm(form.Form):
+validator.WidgetValidatorDiscriminators(NorobotsValidator, field=IExtensionsiteaccountForm2['norobots'])
+grok.global_adapter(NorobotsValidator)
+
+class ExtensionsiteaccountForm(form.SchemaForm):
 
 
     grok.context(ISiteRoot)
-    grok.name('hosting-your-extension2')
+    grok.name('hosting-your-extension')
     grok.require('zope2.View')
 
-    fields = field.Fields(IExtensionsiteaccountForm)
-    fields['captcha'].widgetFactory = ReCaptchaFieldWidget
+    enableCSRFProtection = True
 
-    label = _(u"Hosting your Extension(s) (Registration)")
+    schema = IExtensionsiteaccountForm
+
+    label = _(u"Hosting your Extension(s)")
     description = _(u"Please leave a short description of your template project below.")
 
     ignoreContext = True
@@ -153,23 +156,30 @@ class ExtensionsiteaccountForm(form.Form):
         data, errors = self.extractData()
         if errors:
             self.status = self.formErrorsMessage
-            captcha = getMultiAdapter((aq_inner(self.context), self.request), name='recaptcha')
-            if captcha.verify():
-                print 'ReCaptcha validation passed.'
-            else:
-                print 'The code you entered was wrong, please enter the new one.'
             return
 
-        mailhost = getToolByName(self.context, 'MailHost')
-        urltool = getToolByName(self.context, 'portal_url')
+
+        elif 'leaveblank' in data and data['leaveblank']:
+
+            urltool = getToolByName(self.context, 'portal_url')
+
+            portal = urltool.getPortalObject()
+
+            self.request.response.redirect(portal.absolute_url())
+            return
+
+        else:
+
+            mailhost = getToolByName(self.context, 'MailHost')
+            urltool = getToolByName(self.context, 'portal_url')
 
         portal = urltool.getPortalObject()
 
-        # Construct and send a message
-        toAddress = portal.getProperty('email_from_address')
-        source = "%s <%s>" % ('Asking for an Account on the extensions site', 'extensions@otrs.documentfoundation.org')
-        subject = "%s %s" % (data['firstname'], data['name'])
-        message = MESSAGE_TEMPLATE % data
+            # Construct and send a message
+            toAddress = portal.getProperty('email_from_address')
+            source = "%s" % (data['emailAddress'])
+            subject = "%s  %s %s" % ('Asking for an Account on the LibreOffice Extension Site from', data['firstname'], data['name'])
+            message = MESSAGE_TEMPLATE % data
 
         mailhost.send(message, mto=toAddress, mfrom=str(source), subject=subject, charset='utf8')
 

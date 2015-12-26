@@ -129,7 +129,7 @@ class ExtensionsiteaccountForm2(form.SchemaForm):
 
 
     grok.context(ISiteRoot)
-    grok.name('hosting-your-extension')
+    grok.name('hosting-your-extension2')
     grok.require('zope2.View')
 
     enableCSRFProtection = True
