@@ -171,7 +171,7 @@ class ExtensionsiteaccountForm(form.SchemaForm):
             mailhost = getToolByName(self.context, 'MailHost')
             urltool = getToolByName(self.context, 'portal_url')
 
-        portal = urltool.getPortalObject()
+            portal = urltool.getPortalObject()
 
             # Construct and send a message
             toAddress = portal.getProperty('email_from_address')
