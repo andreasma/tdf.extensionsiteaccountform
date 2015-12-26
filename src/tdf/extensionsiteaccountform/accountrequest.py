@@ -120,7 +120,7 @@ class IExtensionsiteaccountForm(Interface):
                                description=_(u'In order to avoid spam, please answer the question below.'),
                                required=True,)
 
-validator.WidgetValidatorDiscriminators(NorobotsValidator, field=IExtensionsiteaccountForm2['norobots'])
+validator.WidgetValidatorDiscriminators(NorobotsValidator, field=IExtensionsiteaccountForm['norobots'])
 grok.global_adapter(NorobotsValidator)
 
 class ExtensionsiteaccountForm(form.SchemaForm):
